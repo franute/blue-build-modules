@@ -42,5 +42,12 @@ model AkmodsModuleV1 {
    * - nvidia : for the old nvidia propietary driver
    * - nvidia-open : for the new kernel-open driver, to be used in Maxwell and newer cards
    */
-  nvidia-driver: "nvidia" | "nvidia-open";
+  `nvidia-driver`?: "nvidia" | "nvidia-open";
+
+  `nvidia-version`?: "open" | "propietary";
+
+  `nvidia-enabled`?: boolean = false;
+
+  nvidia?: boolean = false;
+  }
 }

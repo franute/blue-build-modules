@@ -37,17 +37,17 @@ BASE_IMAGE_NAME=${BASE_IMAGE##*/}
 BASE_IMAGE_NAME=${BASE_IMAGE_NAME%-*}
 
 # Fetch Common AKMODS & Kernel RPMS
-skopeo copy --retry-times 3 docker://ghcr.io/ublue-os/akmods:"${KERNEL_BASE}"-"$(rpm -E %fedora)" dir:/tmp/akmods
-AKMODS_TARGZ=$(jq -r '.layers[].digest' </tmp/akmods/manifest.json | cut -d : -f 2)
-tar -xvzf /tmp/akmods/"$AKMODS_TARGZ" -C /tmp/
-mv /tmp/rpms/* /tmp/akmods/
+# skopeo copy --retry-times 3 docker://ghcr.io/ublue-os/akmods:"${KERNEL_BASE}"-"$(rpm -E %fedora)" dir:/tmp/akmods
+# AKMODS_TARGZ=$(jq -r '.layers[].digest' </tmp/akmods/manifest.json | cut -d : -f 2)
+# tar -xvzf /tmp/akmods/"$AKMODS_TARGZ" -C /tmp/
+# mv /tmp/rpms/* /tmp/akmods/
 
-echo "Pulling akmods nvidia image"
-skopeo copy --retry-times 3 docker://ghcr.io/ublue-os/akmods-"${NVIDIA_DRIVER}":"${KERNEL_BASE}"-"$(rpm -E %fedora)" dir:/tmp/akmods-rpms
+# echo "Pulling akmods nvidia image"
+# skopeo copy --retry-times 3 docker://ghcr.io/ublue-os/akmods-"${NVIDIA_DRIVER}":"${KERNEL_BASE}"-"$(rpm -E %fedora)" dir:/tmp/akmods-rpms
 
-NVIDIA_TARGZ=$(jq -r '.layers[].digest' </tmp/akmods-rpms/manifest.json | cut -d : -f 2)
-tar -xvzf /tmp/akmods-rpms/"$NVIDIA_TARGZ" -C /tmp/
-mv /tmp/rpms/* /tmp/akmods-rpms/
+# NVIDIA_TARGZ=$(jq -r '.layers[].digest' </tmp/akmods-rpms/manifest.json | cut -d : -f 2)
+# tar -xvzf /tmp/akmods-rpms/"$NVIDIA_TARGZ" -C /tmp/
+# mv /tmp/rpms/* /tmp/akmods-rpms/
 
 if ! grep -q negativo17 <(rpm -qi mesa-dri-drivers); then
     echo "ERROR: you should be using mesa from negativo17 (this should be happening if you're using universal blue's images)"
@@ -55,6 +55,7 @@ if ! grep -q negativo17 <(rpm -qi mesa-dri-drivers); then
 fi
 
 # Install Nvidia RPMs
+AKMODNV_PATH=/rpms
 curl -Lo /tmp/nvidia-install.sh https://raw.githubusercontent.com/ublue-os/main/main/build_files/nvidia-install.sh
 chmod +x /tmp/nvidia-install.sh
 IMAGE_NAME="${BASE_IMAGE_NAME}" RPMFUSION_MIRROR="" /tmp/nvidia-install.sh
