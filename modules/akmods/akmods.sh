@@ -69,8 +69,7 @@ mkdir -p "${KARGS_D}"
 echo 'kargs = ["rd.driver.blacklist=nouveau", "modprobe.blacklist=nouveau", "nvidia-drm.modeset=1", "initcall_blacklist=simpledrm_platform_driver_init"]' >> "${BLUEBUILD_NVIDIA_TOML}"
 }
 
-INSTALL_NVIDIA=false
-NVIDIA_DRIVER=""
+
 get_json_array INSTALL 'try .["install"][]' "$1"
 
 KERNEL_BASE=$(echo "$1" | jq -r 'try .["base"]')
@@ -78,6 +77,7 @@ if [[ -z $KERNEL_BASE || $KERNEL_BASE == "null" ]]; then
 	KERNEL_BASE="main"
 fi
 
+INSTALL_NVIDIA=false
 NVIDIA_DRIVER=$(echo "$1" | jq -r 'try .["nvidia-driver"]')
 if [[ $NVIDIA_DRIVER == "nvidia" || $NVIDIA_DRIVER == "nvidia-open" ]]; then
     INSTALL_NVIDIA=true
